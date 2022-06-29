@@ -41,7 +41,6 @@ jobs:
           name: artifact
           #From this path
           path: target/demo-0.0.1-SNAPSHOT.jar
-
   docker:
     name: Publish - Docker Hub
     runs-on: ubuntu-latest
@@ -57,3 +56,15 @@ jobs:
         run: docker build -t $REPO:latest -t $REPO:${GITHUB_SHA::8} .
       - name: Publish Docker image
         run: docker push $REPO
+
+  deploys:
+    runs-on: ubuntu-latest
+    name: deploy heroku
+    needs: [docker]
+    steps:
+      - name : build
+        run : docker build -f Dockerfile --iidfile imageid.txt -t registry.heroku.com/my-awesome-app/my-app .
+      - run : docker login -u _ -p $HEROKU_TOKEN registry.heroku.com
+      - run : docker push registry.heroku.com/my-awesome-app/my-app
+      - run : apk add --no-cache curl
+      - run : echo "Docker Image ID is $(cat imageid.txt)"
