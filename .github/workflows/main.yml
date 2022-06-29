@@ -57,14 +57,13 @@ jobs:
       - name: Publish Docker image
         run: docker push $REPO
 
-  deploys:
+  deploy-heroku:
     runs-on: ubuntu-latest
-    name: deploy heroku
-    needs: [docker]
     steps:
-      - name : build
-        run : docker build -f Dockerfile --iidfile imageid.txt -t registry.heroku.com/my-awesome-app/my-app .
-      - run : docker login -u _ -p $HEROKU_TOKEN registry.heroku.com
-      - run : docker push registry.heroku.com/my-awesome-app/my-app
-      - run : apk add --no-cache curl
-      - run : echo "Docker Image ID is $(cat imageid.txt)"
+      - name: Storing previous commit
+      - run: git rev-parse HEAD > ./commit.txt
+      - run: heroku/install
+      - name: Pushing to heroku registry
+      - run: heroku container:login
+      - run: heroku container:push web --arg NODE_ENV=production -a $HEROKU_APP_NAME
+      - run: heroku container:release web -a $HEROKU_APP_NAME
