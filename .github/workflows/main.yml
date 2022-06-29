@@ -58,14 +58,9 @@ jobs:
         run: docker push $REPO
 
   deploy-heroku:
-    runs-on: ubuntu-latest
     name: Storing previous commit
+    runs-on: ubuntu-latest
+    needs: [docker]
     steps:
       - uses: actions/checkout@v1
         run: git rev-parse HEAD > ./commit.txt
-             heroku/install
-      - name: Pushing to heroku registry
-      - uses: actions/checkout@v1
-      - run: heroku container:login
-      - run: heroku container:push web --arg NODE_ENV=production -a $HEROKU_APP_NAME
-      - run: heroku container:release web -a $HEROKU_APP_NAME
