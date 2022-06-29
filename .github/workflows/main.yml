@@ -59,11 +59,11 @@ jobs:
 
   deploy-heroku:
     runs-on: ubuntu-latest
+    name: Storing previous commit
     steps:
-      - name: Storing previous commit
       - uses: actions/checkout@v1
-      - run: git rev-parse HEAD > ./commit.txt
-      - run: heroku/install
+        run: git rev-parse HEAD > ./commit.txt
+             heroku/install
       - name: Pushing to heroku registry
       - uses: actions/checkout@v1
       - run: heroku container:login
