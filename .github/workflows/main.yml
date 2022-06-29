@@ -60,11 +60,12 @@ jobs:
   deploy-heroku:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v1
       - name: Storing previous commit
+      - uses: actions/checkout@v1
       - run: git rev-parse HEAD > ./commit.txt
       - run: heroku/install
       - name: Pushing to heroku registry
+      - uses: actions/checkout@v1
       - run: heroku container:login
       - run: heroku container:push web --arg NODE_ENV=production -a $HEROKU_APP_NAME
       - run: heroku container:release web -a $HEROKU_APP_NAME
